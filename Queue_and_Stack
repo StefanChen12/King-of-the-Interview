@@ -1,0 +1,164 @@
+//1. leetcode -- 实现中序遍历
+//For each point, find its children nodes on the most left hand side. Then starting from that point, we add them to the list one by one.
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+ 
+class Solution {
+    public List<Integer> inorderTraversal(TreeNode root){
+        //用一个栈来存放所有的左节点
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        List<Integer> list = new ArrayList<>();
+        while(root != null || !stack.isEmpty()){
+            while(root != null){
+                stack.push(root);
+                root = root.left;
+            }
+            TreeNode node = stack.poll();
+            list.add(node.val);
+            root = node.right;
+        }
+        return list;
+    }
+}
+
+
+
+
+// 2. 用栈实现队列:
+Use two stack:
+Stack 1 for pushing numbers
+Stack 2 for pop and peek. 
+
+Stack 1 and stack 2 combined together to form a queue.
+When we need peek or pop:
+1.	Cheek stack 2 is empty or not
+2.	If is empty, put everything in stack 1 into stack2, now stack2 has a queue structure.
+3.	If is not empty, then we don’t need to put anything to stack 2. Just do the pop or peek.
+
+
+codes:
+
+class MyQueue {
+    // stack 1 is a stcak for pushing
+    private Deque<Integer> stack1;
+    // stack 2 is a stack for pop and peek
+    private Deque<Integer> stack2;
+
+    public MyQueue() {
+        //Stack1 only used for push
+        stack1 = new ArrayDeque<>();
+        //stack2 only used for peek and pop;
+        stack2 = new ArrayDeque<>();
+    }
+    
+    public void push(int x) {
+        stack1.push(x);
+    }
+    
+    public int pop() {
+        if(empty()){
+            return -1;
+        }else{
+            pushtostack2();
+            return stack2.poll();
+        }
+
+    }
+    
+    public int peek() {
+        pushtostack2();
+        return stack2.peek();
+    }
+    
+    public boolean empty() {
+        return (stack1.isEmpty() && stack2.isEmpty());
+    }
+
+    public void pushtostack2(){
+        if(stack2.isEmpty()){
+            while(!stack1.isEmpty()){
+                stack2.push(stack1.poll());
+            }
+        }
+    }
+}
+
+
+/** 
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue obj = new MyQueue();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.peek();
+ * boolean param_4 = obj.empty();
+ */
+
+
+
+
+// 3. 用队列实现栈
+We use stack1 only for push
+Stack 2 actually has all the data .
+
+codes:
+
+class MyStack {
+    Deque<Integer> queue1;
+    Deque<Integer> queue2;
+
+    public MyStack() {
+        //queue2 only used for peek and pop
+        queue2 = new ArrayDeque<>();
+        //queue1 only used for push
+        queue1 = new ArrayDeque<>();
+    }
+    
+    public void push(int x) {
+        queue1.push(x);
+        while(!queue2.isEmpty()){
+            queue1.push(queue2.poll());
+        }
+        Deque<Integer> temp;
+        temp = queue1;
+        queue1 = queue2;
+        queue2 = temp;
+        }
+    
+    public int pop() {
+        return queue2.poll();
+    }
+    
+    public int top() {
+        return queue2.peek();
+    }
+    
+    public boolean empty() {
+        return queue2.isEmpty();
+    }
+}
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack obj = new MyStack();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.top();
+ * boolean param_4 = obj.empty();
+ */
+
+
+
